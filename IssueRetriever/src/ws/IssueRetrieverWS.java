@@ -11,6 +11,7 @@ import javax.xml.ws.WebServiceContext;
 import org.gitlab.api.models.GitlabLabel;
 import org.gitlab.api.models.GitlabProject;
 
+import config.LoadConfig;
 import logic.IssueRetrieverLocal;
 
 @WebService(endpointInterface = "ws.IssueRetrieverWS_SEI")
@@ -18,7 +19,10 @@ public class IssueRetrieverWS implements IssueRetrieverWS_SEI {
 
 	@EJB
 	private IssueRetrieverLocal issueRetriever;
-
+	
+	@EJB
+	private LoadConfig config;
+	
 	@Resource
 	private WebServiceContext ctx;
 

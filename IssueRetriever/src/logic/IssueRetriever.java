@@ -32,16 +32,14 @@ public class IssueRetriever implements IssueRetrieverLocal {
 //	private static final String PROPERTY_DATEFORMAT = "date_format";
 //	private static final String PROPERTY_ENDPOINT = "gitlab_endpoint";
 //	private static final String PROPERTY_TOKEN = "gitlab_token";
-
+//
 //	private static String DATE_FORMAT = "dd/MM/yyyy";
-
+//
 //	private String GITLAB_URL;
 //	private String GITLAB_TOKEN;
 
 	private String errorMessage;
 
-	
-	
 //	@Resource
 //	private WebServiceContext ctx;
 
@@ -54,7 +52,7 @@ public class IssueRetriever implements IssueRetrieverLocal {
 	}
 
 	private GitlabAPI getGitlabAPI() {
-		GitlabAPI gitlabApi = GitlabAPI.connect(LoadConfig.getConfig().getGitLabUrl(), LoadConfig.getConfig().getGitLabToken(), TokenType.PRIVATE_TOKEN,
+		GitlabAPI gitlabApi = GitlabAPI.connect(LoadConfig.getInstance().getGitlabUrl(), LoadConfig.getInstance().getGitlabToken(), TokenType.PRIVATE_TOKEN,
 				AuthMethod.URL_PARAMETER);
 		gitlabApi.ignoreCertificateErrors(true);
 		return gitlabApi;
@@ -62,7 +60,7 @@ public class IssueRetriever implements IssueRetrieverLocal {
 
 	private GitlabHTTPRequestor getGitlabHTTPRequestor() {
 		GitlabHTTPRequestor httpRequestor = new GitlabHTTPRequestor(getGitlabAPI());
-		httpRequestor.authenticate(LoadConfig.getConfig().getGitLabToken(), TokenType.PRIVATE_TOKEN, AuthMethod.URL_PARAMETER);
+		httpRequestor.authenticate( LoadConfig.getInstance().getGitlabToken(), TokenType.PRIVATE_TOKEN, AuthMethod.URL_PARAMETER);
 		return httpRequestor;
 	}
 
@@ -158,12 +156,12 @@ public class IssueRetriever implements IssueRetrieverLocal {
 //	}
 
 	private Date toDate(String date) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat(LoadConfig.getConfig().getDateFormat());
+		SimpleDateFormat sdf = new SimpleDateFormat( LoadConfig.getInstance().getDateFormat());
 		return sdf.parse(date);
 	}
 
 	private String toString(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(LoadConfig.getConfig().getDateFormat());
+		SimpleDateFormat sdf = new SimpleDateFormat(LoadConfig.getInstance().getDateFormat());
 		return sdf.format(date);
 	}
 

@@ -1,101 +1,128 @@
 package config;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
+@Stateless
 public class LoadConfig {
 
 	private static final String PROPERTY_DATEFORMAT = "date_format";
 	private static final String PROPERTY_ENDPOINT = "gitlab_endpoint";
 	private static final String PROPERTY_TOKEN = "gitlab_token";
-	private static String DATE_FORMAT = "dd/MM/yyyy";
-	private static String GITLAB_URL;
-	private static String GITLAB_TOKEN;
+	private String dateFormat;
+	private String gitlabUrl;
+	private String gitlabToken;
 	private static LoadConfig config;
+
 	static Properties prop;
 
-	private static String errorMessage;
-	private static boolean error = false;
+	private String errorMessage;
+	private boolean error = false;
+
+	@Resource
+	private WebServiceContext ctx;
 	
-	static {
+	public LoadConfig() {
 		prop = new Properties();
-		ServletContext servletContext = (ServletContext) FacesContext
-			    .getCurrentInstance().getExternalContext().getContext();
-		try (InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/config.properties")) {
+		
+		if(FacesContext.getCurrentInstance() == null){
+			String contextPath = ((ServletContext) ctx.getMessageContext().get(MessageContext.SERVLET_CONTEXT))
+					.getRealPath("/");
+			String propertiesFile = contextPath + File.separator + "WEB-INF/config.properties";
 
-			prop.load(inputStream);
+			try {
+				prop.load(new FileReader(propertiesFile));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+			ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext()
+					.getContext();
+			try (InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/config.properties")) {
+				prop.load(inputStream);
+			} catch (IOException e) {
+				errorMessage = "Unable to load properties: " + e.getMessage();
+			}
+		}
+		
 
-			DATE_FORMAT = prop.getProperty(PROPERTY_DATEFORMAT);
-			if (DATE_FORMAT == null || "".equals(DATE_FORMAT)) {
+			dateFormat = prop.getProperty(PROPERTY_DATEFORMAT);
+			if (dateFormat == null || "".equals(dateFormat)) {
 				error = true;
 				errorMessage = "Missing date forma configuration";
 			}
 
-			GITLAB_TOKEN = prop.getProperty(PROPERTY_TOKEN);
-			if (GITLAB_TOKEN == null || "".equals(GITLAB_TOKEN)) {
+			gitlabToken = prop.getProperty(PROPERTY_TOKEN);
+			if (gitlabToken == null || "".equals(gitlabToken)) {
 				error = true;
 				errorMessage = "Missing Gitlab authentication token configuration";
 			}
 
-			GITLAB_URL = prop.getProperty(PROPERTY_ENDPOINT);
-			if (GITLAB_URL == null || "".equals(GITLAB_URL)) {
+			gitlabUrl = prop.getProperty(PROPERTY_ENDPOINT);
+			if (gitlabUrl == null || "".equals(gitlabUrl)) {
 				error = true;
 				errorMessage = "Missing Gitlab endpoint configuration";
 			}
 
-		} catch (IOException e) {
-			// log.severe("Unable to load properties: " + e.getMessage());
-		}
+		
 	}
 
-	public static boolean isError() {
+	public boolean isError() {
 		return error;
 	}
 
-	public static void setError(boolean error) {
-		LoadConfig.error = error;
+	public void setError(boolean error) {
+		this.error = error;
 	}
 
 	public String getErrorMessage() {
 		return errorMessage;
 	}
 
-	public static LoadConfig getConfig() {
+	
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	public String getGitlabUrl() {
+		return gitlabUrl;
+	}
+
+	public void setGitlabUrl(String gitlabUrl) {
+		this.gitlabUrl = gitlabUrl;
+	}
+
+	public String getGitlabToken() {
+		return gitlabToken;
+	}
+
+	public void setGitlabToken(String gitlabToken) {
+		this.gitlabToken = gitlabToken;
+	}
+
+	public static LoadConfig getInstance() {
 		if (config == null) {
 			config = new LoadConfig();
 		}
-
 		return config;
 	}
-
-	public String getDateFormat() {
-		String format = prop.getProperty(PROPERTY_DATEFORMAT);
-		if (format == null || "".equals(format)) {
-			// errorMessage = "Missing date forma configuration";
-			return DATE_FORMAT;
-		}
-		return format;
-	}
-
-	public String getGitLabUrl() {
-		GITLAB_URL = prop.getProperty(PROPERTY_ENDPOINT);
-		if (GITLAB_URL == null || "".equals(GITLAB_URL)) {
-			// errorMessage = "Missing Gitlab endpoint configuration";
-		}
-		return GITLAB_URL;
-	}
-
-	public String getGitLabToken() {
-		GITLAB_TOKEN = prop.getProperty(PROPERTY_TOKEN);
-		if (GITLAB_TOKEN == null || "".equals(GITLAB_TOKEN)) {
-			// errorMessage = "Missing Gitlab authentication token
-			// configuration";
-		}
-		return GITLAB_TOKEN;
-	}
-
 }

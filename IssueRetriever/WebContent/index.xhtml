@@ -9,54 +9,88 @@
 	<title>Welcome</title>
 </h:head>
 <h:body>
-	<h:form>
-    <p:dataTable id="tbl" var="project" value="#{issueRetrieverController.projects}"
-                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
-                 paginator="true" rows="10" style="margin-bottom:20px">
- 
-        <f:facet name="{Exporters}">
-            <h:commandLink>
-                 <img src ="images/excel.png" width= "24"/>
-                <p:dataExporter type="xls" target="tbl" fileName="projects" />
-            </h:commandLink>
- 
-            <h:commandLink>
-                <img src ="images/pdf.png" width= "24"/>
-                <p:dataExporter type="pdf" target="tbl" fileName="projects"/>
-            </h:commandLink>
- 
-            <h:commandLink>
-                 <img src ="images/csv.png" width= "24"/>
-                <p:dataExporter type="csv" target="tbl" fileName="projects" />
-            </h:commandLink>
- 
-        </f:facet>
- 
-        <p:column>
-            <f:facet name="header">
-                <h:outputText value="Id" />
-            </f:facet>
-            <h:outputText value="#{project.id}" />
-        </p:column>
- 
-        <p:column>
-            <f:facet name="header">
-                <h:outputText value="Name"/>
-            </f:facet>
-            <h:outputText value="#{project.name}" />
-        </p:column>
- 
-        <p:column>
-            <f:facet name="header">
-                <h:outputText value="Description" />
-            </f:facet>
-            <h:outputText value="#{project.description}" />
-        </p:column>
- 
-    </p:dataTable>
-<h:commandButton id="refresh" value="Refresh Projects"
-                                 actionListener="#{issueRetrieverController.refresh()}" />
- 
-</h:form>
+	<h:form rendered="false">
+		<p:dataTable id="tbl" var="project"
+			value="#{issueRetrieverController.projects}"
+			paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+			paginator="true" rows="10" style="margin-bottom:20px">
+
+			<f:facet name="{Exporters}">
+				<h:commandLink>
+					<img src="images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tbl" fileName="projects" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<img src="images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tbl" fileName="projects" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<img src="images/csv.png" width="24" />
+					<p:dataExporter type="csv" target="tbl" fileName="projects" />
+				</h:commandLink>
+
+			</f:facet>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Id" />
+				</f:facet>
+				<h:outputText value="#{project.id}" />
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Name" />
+				</f:facet>
+				<h:outputText value="#{project.name}" />
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Description" />
+				</f:facet>
+				<h:outputText value="#{project.description}" />
+			</p:column>
+
+		</p:dataTable>
+		<h:commandButton id="refresh" value="Refresh Projects"
+			actionListener="#{issueRetrieverController.refresh()}" />
+
+	</h:form>
+	<h:form id="form">
+		<p:growl id="msgs" showDetail="true" />
+
+		<p:panel header="Select a Project" style="margin-bottom:10px;">
+			<h:panelGrid columns="2" cellpadding="5">
+				<p:outputLabel for="project" value="Project " />
+				<p:selectOneMenu id="project"
+					value="#{issueRetrieverController.project}" style="width:150px">
+					<p:ajax listener="#{issueRetrieverController.onChange()}"
+						update="label" />
+					<f:selectItem itemLabel="Select Project" itemValue=""
+						noSelectionOption="true" />
+					<f:selectItems value="#{issueRetrieverController.projects}"
+						var="project" itemLabel="#{project.name}"
+						itemValue="#{project.id}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="label" value="Label: " />
+				<p:selectOneMenu id="label"
+					value="#{issueRetrieverController.label}" style="width:150px">
+					<f:selectItem itemLabel="Select Label" itemValue=""
+						noSelectionOption="true" />
+					<f:selectItems value="#{issueRetrieverController.labels}" var="label" itemLabel="#{label.color}"
+						itemValue="#{label.name}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<p:separator />
+
+		</p:panel>
+	</h:form>
+
+
 </h:body>
 </html>
