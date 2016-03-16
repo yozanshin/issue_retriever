@@ -48,23 +48,15 @@
  
         <p:column>
             <f:facet name="header">
-                <h:outputText value="Ext system" />
+                <h:outputText value="Description" />
             </f:facet>
             <h:outputText value="#{project.description}" />
         </p:column>
  
     </p:dataTable>
-
+<h:commandButton id="refresh" value="Refresh Projects"
+                                 actionListener="#{issueRetrieverController.refresh()}" />
  
 </h:form>
-<f:view contentType="text/html">
-        <h:body>
-            <h:form prependId="false">
-                <h:messages id="messages" />
-                <h:commandButton id="download" value="Download"
-                                 actionListener="#{exportController.export()}" />
-            </h:form>
-        </h:body>
-    </f:view>
 </h:body>
 </html>
