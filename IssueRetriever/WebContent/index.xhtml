@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Welcome</title>
+</h:head>
+<h:body>
+	<h:form>
+    <p:dataTable id="tbl" var="project" value="#{issueRetrieverController.projects}"
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                 paginator="true" rows="10" style="margin-bottom:20px">
+ 
+        <f:facet name="{Exporters}">
+            <h:commandLink>
+                 <img src ="images/excel.png" width= "24"/>
+                <p:dataExporter type="xls" target="tbl" fileName="projects" />
+            </h:commandLink>
+ 
+            <h:commandLink>
+                <img src ="images/pdf.png" width= "24"/>
+                <p:dataExporter type="pdf" target="tbl" fileName="projects"/>
+            </h:commandLink>
+ 
+            <h:commandLink>
+                 <img src ="images/csv.png" width= "24"/>
+                <p:dataExporter type="csv" target="tbl" fileName="projects" />
+            </h:commandLink>
+ 
+        </f:facet>
+ 
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Id" />
+            </f:facet>
+            <h:outputText value="#{project.id}" />
+        </p:column>
+ 
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Name"/>
+            </f:facet>
+            <h:outputText value="#{project.name}" />
+        </p:column>
+ 
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Ext system" />
+            </f:facet>
+            <h:outputText value="#{project.description}" />
+        </p:column>
+ 
+    </p:dataTable>
+
+ 
+</h:form>
+<f:view contentType="text/html">
+        <h:body>
+            <h:form prependId="false">
+                <h:messages id="messages" />
+                <h:commandButton id="download" value="Download"
+                                 actionListener="#{exportController.export()}" />
+            </h:form>
+        </h:body>
+    </f:view>
+</h:body>
+</html>
