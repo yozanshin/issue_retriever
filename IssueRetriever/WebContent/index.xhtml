@@ -67,7 +67,7 @@
 				<p:outputLabel for="project" value="Project " />
 				<p:selectOneMenu id="project"
 					value="#{issueRetrieverController.project}" style="width:150px" required="true" requiredMessage="Please select a project">
-					<p:ajax event="change" immediate="true" listener="#{issueRetrieverController.onChange}"
+					<p:ajax immediate="true" listener="#{issueRetrieverController.onChange}"
 						update="label1 label2 label3 mileS" />
 					<f:selectItem itemLabel="Select Project" itemValue=""/>
 					<f:selectItems value="#{issueRetrieverController.projects}"
