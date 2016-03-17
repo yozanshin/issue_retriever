@@ -66,24 +66,59 @@
 			<h:panelGrid columns="2" cellpadding="5">
 				<p:outputLabel for="project" value="Project " />
 				<p:selectOneMenu id="project"
-					value="#{issueRetrieverController.project}" style="width:150px">
-					<p:ajax listener="#{issueRetrieverController.onChange()}"
-						update="label" />
-					<f:selectItem itemLabel="Select Project" itemValue=""
-						noSelectionOption="true" />
+					value="#{issueRetrieverController.project}" style="width:150px" required="true" requiredMessage="Please select a project">
+					<p:ajax event="change" immediate="true" listener="#{issueRetrieverController.onChange}"
+						update="label1 label2 label3 mileS" />
+					<f:selectItem itemLabel="Select Project" itemValue=""/>
 					<f:selectItems value="#{issueRetrieverController.projects}"
 						var="project" itemLabel="#{project.name}"
 						itemValue="#{project.id}" />
 				</p:selectOneMenu>
 
-				<p:outputLabel for="label" value="Label: " />
-				<p:selectOneMenu id="label"
-					value="#{issueRetrieverController.label}" style="width:150px">
+				<p:outputLabel for="label1" value="First Label: " />
+				<p:selectOneMenu id="label1"
+					value="#{issueRetrieverController.label1}" style="width:150px" required="true" requiredMessage="Please select a label">
 					<f:selectItem itemLabel="Select Label" itemValue=""
 						noSelectionOption="true" />
-					<f:selectItems value="#{issueRetrieverController.labels}" var="label" itemLabel="#{label.color}"
-						itemValue="#{label.name}" />
+					<f:selectItems value="#{issueRetrieverController.labels}" var="label1" itemLabel="#{label1.name}"
+						itemValue="#{label1.name}" />
 				</p:selectOneMenu>
+			
+				<p:outputLabel for="label2" value="Second Label: " />
+				<p:selectOneMenu id="label2"
+					value="#{issueRetrieverController.label2}" style="width:150px" required="true" requiredMessage="Please select a label">
+					<f:selectItem itemLabel="Select Label" itemValue=""
+						noSelectionOption="true" />
+					<f:selectItems value="#{issueRetrieverController.labels}" var="label2" itemLabel="#{label2.name}"
+						itemValue="#{label2.name}" />
+				</p:selectOneMenu>
+			
+				<p:outputLabel for="label3" value="Third Label: " />
+				<p:selectOneMenu id="label3"
+					value="#{issueRetrieverController.label3}" style="width:150px" required="true" requiredMessage="Please select a label">
+					<f:selectItem itemLabel="Select Label" itemValue=""
+						noSelectionOption="true" />
+					<f:selectItems value="#{issueRetrieverController.labels}" var="label3" itemLabel="#{label3.name}"
+						itemValue="#{label3.name}" />
+				</p:selectOneMenu>
+			
+				<p:outputLabel for="mileS" value="Milestone: " />
+				<p:selectOneMenu id="mileS"
+					value="#{issueRetrieverController.milestone}" style="width:150px">
+					<f:selectItem itemLabel="Select milestone" itemValue=""
+						noSelectionOption="true" />
+					<f:selectItems value="#{issueRetrieverController.milestones}" var="milestone" itemLabel="#{milestone.title}"
+						itemValue="#{milestone.id}" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel for="startDate" value="Select start date" />
+        		<p:calendar id="startDate" value="#{issueRetrieverController.startDate}" required="true" requiredMessage="Please a start date"/>
+        		
+				<p:outputLabel for="endDate" value="Select end date" />
+        		<p:calendar id="endDate" value="#{issueRetrieverController.endDate}" required="true" requiredMessage="Please a end date"/>
+        
+        
+        
 			</h:panelGrid>
 
 			<p:separator />
