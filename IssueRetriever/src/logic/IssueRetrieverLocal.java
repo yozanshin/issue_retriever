@@ -1,5 +1,6 @@
 package logic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.gitlab.api.models.GitlabIssue;
@@ -15,6 +16,6 @@ public interface IssueRetrieverLocal {
 
 	public List<GitlabMilestone> getMilestones(String projectId) throws Exception;
 
-	public List<GitlabIssue> getIssues(String projectId, String[] labels, String milestone, String after, String before)
+	public List<GitlabIssue> getIssues(String projectId, ArrayList<String> labels, String milestone, String after, String before)
 			throws Exception;
 }

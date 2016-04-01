@@ -2,43 +2,71 @@ package controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.gitlab.api.models.GitlabIssue;
 import org.gitlab.api.models.GitlabLabel;
 import org.gitlab.api.models.GitlabMilestone;
 import org.gitlab.api.models.GitlabProject;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
+import config.ConfigException;
 import config.LoadConfig;
 import logic.IssueRetrieverLocal;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class IssueRetrieverController {
 
 	@EJB
 	private IssueRetrieverLocal issueRetriever;
 
 	private List<GitlabProject> projects;
-	private List<GitlabLabel> labels;
+	private List<GitlabLabel> labels1;
 	private List<GitlabMilestone> milestones;
+	
+	private List<GitlabIssue> issues;
 
 	private String project;
 	private String label1;
 	private String label2;
 	private String label3;
 	private String milestone;
+	private String issue;
 	
 	private Date startDate;
 	private Date endDate;
+	
+	private String startDateSt;
+	private String endDateSt;
+	
+	private String dateFormat;
+
+	public String getStartDateSt() {
+		return startDateSt;
+	}
+
+	public void setStartDateSt(String startDateSt) {
+		this.startDateSt = startDateSt;
+	}
+
+	public String getEndDateSt() {
+		return endDateSt;
+	}
+
+	public void setEndDateSt(String endDateSt) {
+		this.endDateSt = endDateSt;
+	}
 
 	public List<GitlabProject> getProjects() {
 		try {
@@ -48,10 +76,6 @@ public class IssueRetrieverController {
 				projects = issueRetriever.getProjects();
 				System.out.println("PROJECTS: " + projects.size() + ". TIME: "
 						+ (float) (System.currentTimeMillis() - initTime) / 1000 + " seconds");
-				// for (GitlabProject project : results) {
-				// System.out.println(project.getNameWithNamespace() + " : " +
-				// project.getTagList());
-				// }
 			}
 
 			return projects;
@@ -63,13 +87,15 @@ public class IssueRetrieverController {
 		}
 	}
 
-	public void onChange() {
+	public void onChange() throws Exception {
 		if (project != null && !project.equals("")){
-			setLabels(getLabels(Integer.parseInt(project)));
+			setLabels1(getLabels(Integer.parseInt(project)));
 			setMilestones(getMilestones(Integer.parseInt(project)));
 		}
 		else{
-			setLabels(new ArrayList<GitlabLabel>());
+			setLabels1(new ArrayList<GitlabLabel>());
+			setLabels1(new ArrayList<GitlabLabel>());
+			setLabels1(new ArrayList<GitlabLabel>());
 		setMilestones(new ArrayList<GitlabMilestone>());
 		}
 	}
@@ -78,36 +104,25 @@ public class IssueRetrieverController {
 		return project;
 	}
 
-	public void setProject(String project) {
+	public void setProject(String project) throws Exception {
 		this.project = project;
 		onChange();
 	}
 
-	public List<GitlabLabel> getLabels(Integer projectId) {
-		try {
+	public List<GitlabLabel> getLabels(Integer projectId) throws Exception {
 			return issueRetriever.getLabels(projectId.toString());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new ArrayList<GitlabLabel>();
 	}
 
-	public List<GitlabMilestone> getMilestones(Integer projectId){
-		try {
+	public List<GitlabMilestone> getMilestones(Integer projectId) throws Exception{
 		return issueRetriever.getMilestones(projectId.toString());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new ArrayList<GitlabMilestone>();
+		
 	}
 
 	public String getLabel1() {
 		return label1;
 	}
 
-	public void setLabel(String label1) {
+	public void setLabel1(String label1) {
 		this.label1 = label1;
 	}
 
@@ -127,12 +142,16 @@ public class IssueRetrieverController {
 		this.label3 = label3;
 	}
 
-	public List<GitlabLabel> getLabels() {
-		return labels;
+	public List<GitlabLabel> getLabels1() {
+		return labels1;
 	}
 
-	public void setLabels(List<GitlabLabel> labels) {
-		this.labels = labels;
+	public void setLabels1(List<GitlabLabel> labels1) {
+		this.labels1 = labels1;
+	}
+	
+	public List<GitlabLabel> getLabels2() {
+		return labels1;
 	}
 	
 	public String getMilestone() {
@@ -155,25 +174,15 @@ public class IssueRetrieverController {
 		this.milestones = milestones;
 	}
 
-    public void onDateSelect(SelectEvent event) {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        SimpleDateFormat format = new SimpleDateFormat(LoadConfig.getInstance().getDateFormat());
-        facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Date Selected", format.format(event.getObject())));
-    }
-     
-    public void click() {
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-         
-        requestContext.update("form:display");
-        requestContext.execute("PF('dlg').show()");
-    }
-
 	public Date getStartDate() {
 		return startDate;
 	}
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+
+		SimpleDateFormat formatter = new SimpleDateFormat(LoadConfig.getInstance().getDateFormat());
+		startDateSt=formatter.format(this.startDate);
 	}
 
 	public Date getEndDate() {
@@ -182,5 +191,71 @@ public class IssueRetrieverController {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+
+		SimpleDateFormat formatter = new SimpleDateFormat(LoadConfig.getInstance().getDateFormat());
+		endDateSt=formatter.format(this.endDate);
 	}
+	
+	public String submit() throws Exception{		
+		
+		ArrayList<String> labels=new ArrayList<String>();
+		
+		if(label1 != null && !label1.isEmpty()){ 
+			label1=label1.replaceAll(" ", "%20"); 
+			labels.add(label1);
+		}
+		
+		if(label2 != null && !label2.isEmpty()){ 
+			label2=label2.replaceAll(" ", "%20"); 
+			if(!labels.contains(label2)){ 
+				labels.add(label2);
+			}
+		}
+		
+		//if(label3 != null && !label3.isEmpty()){ 
+			label3=label3.replaceAll(" ", "%20"); 
+			if(!labels.contains(label3)){
+				labels.add(label3);
+			}
+		//}
+		
+		if(milestone != null && !milestone.isEmpty()){ 
+			milestone=milestone.replaceAll(" ", "%20"); 
+		}
+			setIssues(issueRetriever.getIssues(project, labels, milestone, startDateSt, endDateSt));
+
+		
+		return "tablePage";
+	}
+	
+	public boolean checkConfig() throws ConfigException{
+		return !LoadConfig.getInstance().isError();
+	}
+
+	public List<GitlabIssue> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(List<GitlabIssue> issues) {
+		this.issues = issues;
+	}
+
+	public String getIssue() {
+		return issue;
+	}
+
+	public void setIssue(String issue) {
+		this.issue = issue;
+	}
+
+	public String getDateFormat() {
+		setDateFormat(LoadConfig.getInstance().getDateFormat());
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
 }
+

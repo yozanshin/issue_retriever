@@ -25,7 +25,7 @@ import config.LoadConfig;
 @Startup
 public class IssueRetriever implements IssueRetrieverLocal {
 
-	private static final String GET_ISSUES_PATH = "projects/{0}/issues?";
+	private static final String GET_ISSUES_PATH = "projects/{0}/issues";
 	private static final String QUERY_LABELS = "labels={0}";
 	private static final String QUERY_MILESTONE = "milestone={0}";
 
@@ -65,7 +65,7 @@ public class IssueRetriever implements IssueRetrieverLocal {
 	}
 
 	@Override
-	public List<GitlabIssue> getIssues(String projectId, String[] labels, String milestone, String after, String before)
+	public List<GitlabIssue> getIssues(String projectId, ArrayList<String> labels, String milestone, String after, String before)
 			throws Exception {
 		try {
 			GitlabHTTPRequestor httpRequestor = getGitlabHTTPRequestor();
@@ -91,14 +91,26 @@ public class IssueRetriever implements IssueRetrieverLocal {
 		}
 	}
 
-	private String getIssuesResource(String projectId, String[] labels, String milestone) {
+	private String getIssuesResource(String projectId, ArrayList<String> labels, String milestone) {
 		StringBuilder sb = new StringBuilder("");
+		
 		sb.append(MessageFormat.format(GET_ISSUES_PATH, projectId));
-		sb.append(MessageFormat.format(QUERY_LABELS, String.join(",", labels)));
-		if (!"".equals(milestone)) {
+		
+		if(labels.size()!=0 && (milestone != null && !milestone.isEmpty())){
+			sb.append("?");
+			sb.append(MessageFormat.format(QUERY_LABELS, String.join(",", labels)));
 			sb.append("&");
 			sb.append(MessageFormat.format(QUERY_MILESTONE, milestone));
 		}
+		else if(labels.size()!=0){
+			sb.append("?");
+			sb.append(MessageFormat.format(QUERY_LABELS, String.join(",", labels)));
+		}
+		else if(milestone != null && !milestone.isEmpty()){
+			sb.append("?");
+			sb.append(MessageFormat.format(QUERY_MILESTONE, milestone));			
+		}
+
 		return sb.toString();
 	}
 

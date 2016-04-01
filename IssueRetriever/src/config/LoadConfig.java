@@ -82,7 +82,11 @@ public class LoadConfig {
 		
 	}
 
-	public boolean isError() {
+	public boolean isError() throws ConfigException {
+		if(error){
+			throw new ConfigException();
+		}
+		
 		return error;
 	}
 

@@ -4,61 +4,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:head>
-	<title>Welcome</title>
+	<title>Search Issues</title>
 </h:head>
 <h:body>
-	<h:form rendered="false">
-		<p:dataTable id="tbl" var="project"
-			value="#{issueRetrieverController.projects}"
-			paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
-			paginator="true" rows="10" style="margin-bottom:20px">
-
-			<f:facet name="{Exporters}">
-				<h:commandLink>
-					<img src="images/excel.png" width="24" />
-					<p:dataExporter type="xls" target="tbl" fileName="projects" />
-				</h:commandLink>
-
-				<h:commandLink>
-					<img src="images/pdf.png" width="24" />
-					<p:dataExporter type="pdf" target="tbl" fileName="projects" />
-				</h:commandLink>
-
-				<h:commandLink>
-					<img src="images/csv.png" width="24" />
-					<p:dataExporter type="csv" target="tbl" fileName="projects" />
-				</h:commandLink>
-
-			</f:facet>
-
-			<p:column>
-				<f:facet name="header">
-					<h:outputText value="Id" />
-				</f:facet>
-				<h:outputText value="#{project.id}" />
-			</p:column>
-
-			<p:column>
-				<f:facet name="header">
-					<h:outputText value="Name" />
-				</f:facet>
-				<h:outputText value="#{project.name}" />
-			</p:column>
-
-			<p:column>
-				<f:facet name="header">
-					<h:outputText value="Description" />
-				</f:facet>
-				<h:outputText value="#{project.description}" />
-			</p:column>
-
-		</p:dataTable>
-		<h:commandButton id="refresh" value="Refresh Projects"
-			actionListener="#{issueRetrieverController.refresh()}" />
-
-	</h:form>
+<c:if test="#{issueRetrieverController.checkConfig()}">
 	<h:form id="form">
 		<p:growl id="msgs" showDetail="true" />
 
@@ -67,9 +19,9 @@
 				<p:outputLabel for="project" value="Project " />
 				<p:selectOneMenu id="project"
 					value="#{issueRetrieverController.project}" style="width:150px" required="true" requiredMessage="Please select a project">
-					<p:ajax immediate="true" listener="#{issueRetrieverController.onChange}"
+					<p:ajax event="change" immediate="true" listener="#{issueRetrieverController.onChange}"
 						update="label1 label2 label3 mileS" />
-					<f:selectItem itemLabel="Select Project" itemValue=""/>
+					<f:selectItem itemLabel="--Select Project--" itemValue="" noSelectionOption="true"/>
 					<f:selectItems value="#{issueRetrieverController.projects}"
 						var="project" itemLabel="#{project.name}"
 						itemValue="#{project.id}" />
@@ -77,38 +29,38 @@
 
 				<p:outputLabel for="label1" value="First Label: " />
 				<p:selectOneMenu id="label1"
-					value="#{issueRetrieverController.label1}" style="width:150px" required="true" requiredMessage="Please select a label">
-					<f:selectItem itemLabel="Select Label" itemValue=""
+ 					value="#{issueRetrieverController.label1}" style="width:150px"> 
+					<f:selectItem itemLabel="--Select Label--" itemValue=""
 						noSelectionOption="true" />
-					<f:selectItems value="#{issueRetrieverController.labels}" var="label1" itemLabel="#{label1.name}"
+					<f:selectItems value="#{issueRetrieverController.labels1}" var="label1" itemLabel="#{label1.name}"
 						itemValue="#{label1.name}" />
 				</p:selectOneMenu>
 			
 				<p:outputLabel for="label2" value="Second Label: " />
 				<p:selectOneMenu id="label2"
-					value="#{issueRetrieverController.label2}" style="width:150px" required="true" requiredMessage="Please select a label">
-					<f:selectItem itemLabel="Select Label" itemValue=""
+					value="#{issueRetrieverController.label2}" style="width:150px"> 
+					<f:selectItem itemLabel="--Select Label--" itemValue=""
 						noSelectionOption="true" />
-					<f:selectItems value="#{issueRetrieverController.labels}" var="label2" itemLabel="#{label2.name}"
+					<f:selectItems value="#{issueRetrieverController.labels1}" var="label2" itemLabel="#{label2.name}"
 						itemValue="#{label2.name}" />
 				</p:selectOneMenu>
 			
 				<p:outputLabel for="label3" value="Third Label: " />
 				<p:selectOneMenu id="label3"
-					value="#{issueRetrieverController.label3}" style="width:150px" required="true" requiredMessage="Please select a label">
-					<f:selectItem itemLabel="Select Label" itemValue=""
+					value="#{issueRetrieverController.label3}" style="width:150px"> 
+					<f:selectItem itemLabel="--Select Label--" itemValue=""
 						noSelectionOption="true" />
-					<f:selectItems value="#{issueRetrieverController.labels}" var="label3" itemLabel="#{label3.name}"
+					<f:selectItems value="#{issueRetrieverController.labels1}" var="label3" itemLabel="#{label3.name}"
 						itemValue="#{label3.name}" />
 				</p:selectOneMenu>
 			
 				<p:outputLabel for="mileS" value="Milestone: " />
 				<p:selectOneMenu id="mileS"
 					value="#{issueRetrieverController.milestone}" style="width:150px">
-					<f:selectItem itemLabel="Select milestone" itemValue=""
+					<f:selectItem itemLabel="--Select milestone--" itemValue=""
 						noSelectionOption="true" />
 					<f:selectItems value="#{issueRetrieverController.milestones}" var="milestone" itemLabel="#{milestone.title}"
-						itemValue="#{milestone.id}" />
+						itemValue="#{milestone.title}" />
 				</p:selectOneMenu>
 				
 				<p:outputLabel for="startDate" value="Select start date" />
@@ -117,15 +69,15 @@
 				<p:outputLabel for="endDate" value="Select end date" />
         		<p:calendar id="endDate" value="#{issueRetrieverController.endDate}" required="true" requiredMessage="Please a end date"/>
         
-        
-        
+				<h:commandButton value="submit" action="#{issueRetrieverController.submit}"/>
+				
 			</h:panelGrid>
 
 			<p:separator />
 
 		</p:panel>
 	</h:form>
-
+</c:if>
 
 </h:body>
 </html>
