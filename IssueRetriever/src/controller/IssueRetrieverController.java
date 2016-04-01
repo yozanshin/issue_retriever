@@ -212,12 +212,12 @@ public class IssueRetrieverController {
 			}
 		}
 		
-		//if(label3 != null && !label3.isEmpty()){ 
+		if(label3 != null && !label3.isEmpty()){ 
 			label3=label3.replaceAll(" ", "%20"); 
 			if(!labels.contains(label3)){
 				labels.add(label3);
 			}
-		//}
+		}
 		
 		if(milestone != null && !milestone.isEmpty()){ 
 			milestone=milestone.replaceAll(" ", "%20"); 

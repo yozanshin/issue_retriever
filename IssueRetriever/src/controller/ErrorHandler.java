@@ -1,31 +1,77 @@
 package controller;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.context.FacesContext;
-@ManagedBean
-@RequestScoped
-public class ErrorHandler {
-    public String getStatusCode(){
-        String val = String.valueOf((Integer)FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("javax.servlet.error.status_code"));
-        return val;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/ErrorHandler")
+public class ErrorHandler  extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	 
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+        processError(request, response);
     }
-    public String getMessage(){
-        String val =  (String)FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("javax.servlet.error.message");
-        return val;
+ 
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+        processError(request, response);
     }
-    public String getExceptionType(){
-        String val = FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("javax.servlet.error.exception_type").toString();
-        return val;
-    }
-    public String getException(){
-        String val =  (String)((Exception)FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("javax.servlet.error.exception")).toString();
-        return val;
-    }
-    public String getRequestURI(){
-        return (String)FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("javax.servlet.error.request_uri");
-    }
-    public String getServletName(){
-        return (String)FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("javax.servlet.error.servlet_name");
+ 
+    private void processError(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        // Analyze the servlet exception
+        Throwable throwable = (Throwable) request
+                .getAttribute("javax.servlet.error.exception");
+        Integer statusCode = (Integer) request
+                .getAttribute("javax.servlet.error.status_code");
+        String servletName = (String) request
+                .getAttribute("javax.servlet.error.servlet_name");
+        if (servletName == null) {
+            servletName = "Unknown";
+        }
+        String requestUri = (String) request
+                .getAttribute("javax.servlet.error.request_uri");
+        if (requestUri == null) {
+            requestUri = "Unknown";
+        }
+         
+        // Set response content type
+          response.setContentType("text/html");
+         
+          PrintWriter out = response.getWriter();
+          
+          if(throwable.getMessage().contains("ConfigException")){
+        	  out.write("<html><head><title>Error in configuration file</title></head><body>");
+        	  out.write("<h3>Error Details</h3>");
+              out.write("<strong>You need to reconfigure file config.properties</strong>");
+              out.write("<br>");
+	          out.write("<a href=\"configureProperties.xhtml\"><strong>Configure now</strong></a>");
+          }
+          else{
+	          out.write("<html><head><title>Exception/Error Details</title></head><body>");
+	          if(statusCode != 500){
+	              out.write("<h3>Error Details</h3>");
+	              out.write("<strong>Status Code</strong>:"+statusCode+"<br>");
+	              out.write("<strong>Requested URI</strong>:"+requestUri);
+	          }else{
+	              out.write("<h3>Exception Details</h3>");
+	              out.write("<ul><li>Servlet Name:"+servletName+"</li>");
+	              out.write("<li>Exception Name:"+throwable.getClass().getName()+"</li>");
+	              out.write("<li>Requested URI:"+requestUri+"</li>");
+	              out.write("<li>Exception Message:"+throwable.getMessage()+"</li>");
+	              out.write("</ul>");
+	          }
+	           
+	          out.write("<br><br>");
+	          out.write("<a href=\"index.xhtml\">Home Page</a>");
+	          out.write("</body></html>");
+          }
     }
 }

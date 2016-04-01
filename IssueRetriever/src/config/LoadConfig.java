@@ -2,13 +2,16 @@ package config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
@@ -104,7 +107,27 @@ public class LoadConfig {
 	}
 
 	public void setDateFormat(String dateFormat) {
-		this.dateFormat = dateFormat;
+		if (dateFormat != null || !"".equals(dateFormat)) {
+			this.dateFormat = dateFormat;
+			ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext()
+					.getContext();
+			
+			ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+			try (InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/config.properties")) {
+				prop = new Properties();
+				
+				prop.load(inputStream);
+					FileOutputStream outputStream = new FileOutputStream(externalContext.getRealPath("/WEB-INF/config.properties"));
+				
+				prop.setProperty(PROPERTY_DATEFORMAT, this.dateFormat);
+				prop.store(outputStream, null);
+				outputStream.close();
+			} catch (IOException e) {
+				errorMessage = "Unable to load properties: " + e.getMessage();
+			}
+			
+			error = false;
+		}
 	}
 
 	public String getGitlabUrl() {
@@ -112,7 +135,27 @@ public class LoadConfig {
 	}
 
 	public void setGitlabUrl(String gitlabUrl) {
-		this.gitlabUrl = gitlabUrl;
+		if (gitlabUrl != null || !"".equals(gitlabUrl)) {
+			this.gitlabUrl = gitlabUrl;
+			ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext()
+					.getContext();
+			
+			ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+			try (InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/config.properties")) {
+				prop = new Properties();
+				
+				prop.load(inputStream);
+					FileOutputStream outputStream = new FileOutputStream(externalContext.getRealPath("/WEB-INF/config.properties"));
+				
+				prop.setProperty(PROPERTY_ENDPOINT, this.gitlabUrl);
+				prop.store(outputStream, null);
+				outputStream.close();
+			} catch (IOException e) {
+				errorMessage = "Unable to update properties: " + e.getMessage();
+			}
+			
+			error = false;
+		}
 	}
 
 	public String getGitlabToken() {
@@ -120,7 +163,27 @@ public class LoadConfig {
 	}
 
 	public void setGitlabToken(String gitlabToken) {
-		this.gitlabToken = gitlabToken;
+		if (gitlabToken != null || !"".equals(gitlabToken)) {
+			this.gitlabToken = gitlabToken;
+			ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext()
+					.getContext();
+			
+			ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+			try (InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/config.properties")) {
+				prop = new Properties();
+				
+				prop.load(inputStream);
+					FileOutputStream outputStream = new FileOutputStream(externalContext.getRealPath("/WEB-INF/config.properties"));
+				
+				prop.setProperty(PROPERTY_TOKEN, this.gitlabToken);
+				prop.store(outputStream, null);
+				outputStream.close();
+			} catch (IOException e) {
+				errorMessage = "Unable to update properties: " + e.getMessage();
+			}
+			
+			error = false;
+		}
 	}
 
 	public static LoadConfig getInstance() {
