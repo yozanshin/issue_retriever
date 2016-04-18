@@ -10,7 +10,6 @@
 	<title>Reconfigure configuration</title>
 </h:head>
 <f:metadata>
-	<f:viewParam name="toConfig" value="#{configController.toConfig}"/>
     <f:event type="preRenderView" listener="#{configController.init()}" />
 </f:metadata>
 
@@ -21,26 +20,16 @@
 	<p:panel header="Configure your settings properties" style="margin-bottom:10px;">
 	<h:panelGrid columns="2" cellpadding="5">
 
-		<h:outputText style="display: 
-		#{configController.toConfig == 'full' || configController.toConfig == 'date' ? 'block' : 'none'}"
-		   value="Date Format:"/>
-   			<h:inputText style="display: 
-		#{configController.toConfig == 'full' || configController.toConfig == 'date' ? 'block' : 'none'}"
-		  value="#{configController.dateFormat}"  required="true" requiredMessage="Please insert a valid date format"/>   			
+		<h:outputText value="Date Format:"/>
+   			<h:inputText value="#{configController.dateFormat}"/>
     			
-		<h:outputText style="display: 
-		#{configController.toConfig == 'full' || configController.toConfig == 'url' ? 'block' : 'none'}"
-		 value="Gitlab URL:"/>
-   			<h:inputText style="display: 
-   		#{configController.toConfig == 'full' || configController.toConfig == 'url' ? 'block' : 'none'}" 
-   			value="#{configController.gitlabUrl}" required="true" requiredMessage="Please insert an valid url"/>
-
-		<h:outputText style="display: 
-		#{configController.toConfig == 'full' || configController.toConfig == 'token' ? 'block' : 'none'}"
-		  value="Gitlab Token:"/>
-   			<h:inputText style="display: 
-		#{configController.toConfig == 'full' || configController.toConfig == 'token' ? 'block' : 'none'}"
-		  value="#{configController.gitlabToken}" required="true" requiredMessage="Please insert a valid token"/>
+    			
+		<h:outputText value="Gitlab URL:"/>
+   			<h:inputText value="#{configController.gitlabUrl}"/>
+    			
+    			
+		<h:outputText value="Gitlab Token:"/>
+   			<h:inputText value="#{configController.gitlabToken}"/>
 
 		<h:commandButton value="submit" action="#{configController.submit()}"/>
 	
@@ -48,10 +37,4 @@
 	</p:panel>	
 </h:form>
 </h:body>
-<script type="">
-    jQuery(document).ready(function() {
-        PathFinder.findAndGo();
-    });
-</script>
-
 </html>

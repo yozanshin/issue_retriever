@@ -19,7 +19,6 @@ import org.gitlab.api.models.GitlabLabel;
 import org.gitlab.api.models.GitlabMilestone;
 import org.gitlab.api.models.GitlabProject;
 
-import component.LogicException;
 import config.LoadConfig;
 
 @Stateless
@@ -127,23 +126,11 @@ public class IssueRetriever implements IssueRetrieverLocal {
 
 	@Override
 	public List<GitlabProject> getProjects() throws Exception {
-		try{
 		List<GitlabProject> projects = getGitlabAPI().getProjects();
 		if (projects.isEmpty()) {
 			throw new LogicException("No projects found");
 		}
-
 		return projects;
-		}catch(java.lang.Throwable th){
-			if(th.getMessage().contains("401 Unauthorized")){
-				throw new component.ConfigException("Token Error");
-			}
-			else if(th.getMessage().contains("UnknownHostException")){
-				throw new component.ConfigException("HOST Error");
-			}
-			throw new java.lang.Exception();
-		}
-			
 	}
 
 //	@PostConstruct

@@ -11,7 +11,6 @@ public class ConfigController {
 	private String dateFormat;
 	private String gitlabUrl;
 	private String gitlabToken;
-	private String toConfig;
 	
 	public void init(){
 		setDateFormat(LoadConfig.getInstance().getDateFormat());
@@ -44,14 +43,6 @@ public class ConfigController {
 	}
 	public void setGitlabToken(String gitlabToken) {
 		this.gitlabToken = gitlabToken;
-	}
-
-	public String getToConfig() {
-		return toConfig;
-	}
-
-	public void setToConfig(String toConfig) {
-		this.toConfig = toConfig;
 	}
 	
 }
