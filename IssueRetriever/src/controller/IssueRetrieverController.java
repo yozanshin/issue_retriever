@@ -20,7 +20,8 @@ import org.gitlab.api.models.GitlabProject;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
-import config.ConfigException;
+import component.ConfigException;
+import component.InfoException;
 import config.LoadConfig;
 import logic.IssueRetrieverLocal;
 
@@ -68,8 +69,8 @@ public class IssueRetrieverController {
 		this.endDateSt = endDateSt;
 	}
 
-	public List<GitlabProject> getProjects() {
-		try {
+	public List<GitlabProject> getProjects() throws Exception{
+//		try {
 
 			if (projects == null) {
 				long initTime = System.currentTimeMillis();
@@ -80,11 +81,11 @@ public class IssueRetrieverController {
 
 			return projects;
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("ERROR: " + ex.getMessage());
-			return null;
-		}
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//			System.out.println("ERROR: " + ex.getMessage());
+//			return null;
+//		}
 	}
 
 	public void onChange() throws Exception {
@@ -200,6 +201,10 @@ public class IssueRetrieverController {
 		
 		ArrayList<String> labels=new ArrayList<String>();
 		
+		if(endDate.before(startDate)){
+			throw new InfoException("Bad date range");
+		}
+		
 		if(label1 != null && !label1.isEmpty()){ 
 			label1=label1.replaceAll(" ", "%20"); 
 			labels.add(label1);
@@ -224,7 +229,7 @@ public class IssueRetrieverController {
 		}
 			setIssues(issueRetriever.getIssues(project, labels, milestone, startDateSt, endDateSt));
 
-		
+			
 		return "tablePage";
 	}
 	
