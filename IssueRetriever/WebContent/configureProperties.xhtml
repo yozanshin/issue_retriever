@@ -10,6 +10,7 @@
 	<title>Reconfigure configuration</title>
 </h:head>
 <f:metadata>
+	<f:viewParam name="toConfig" value="#{configController.toConfig}" />
     <f:event type="preRenderView" listener="#{configController.init()}" />
 </f:metadata>
 
@@ -20,16 +21,20 @@
 	<p:panel header="Configure your settings properties" style="margin-bottom:10px;">
 	<h:panelGrid columns="2" cellpadding="5">
 
+	<c:if test="#{configController.toConfig == 'date' or configController.toConfig == 'full'}">
 		<h:outputText value="Date Format:"/>
    			<h:inputText value="#{configController.dateFormat}"/>
-    			
-    			
+    </c:if>			
+    		
+    <c:if test="#{configController.toConfig == 'url' or configController.toConfig == 'full'}">			
 		<h:outputText value="Gitlab URL:"/>
    			<h:inputText value="#{configController.gitlabUrl}"/>
+    </c:if>			
     			
-    			
+    <c:if test="#{configController.toConfig == 'token' or configController.toConfig == 'full'}">			
 		<h:outputText value="Gitlab Token:"/>
    			<h:inputText value="#{configController.gitlabToken}"/>
+    </c:if>			
 
 		<h:commandButton value="submit" action="#{configController.submit()}"/>
 	

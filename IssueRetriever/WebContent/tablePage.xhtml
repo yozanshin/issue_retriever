@@ -76,13 +76,8 @@
 				<c:if test="${'#{ not null issue.assignee.email}'}">
 					<h:outputText value="#{issue.assignee.email}" />				
 				</c:if>
-				<c:otherwise>
-					<c:if test="${'#{ not null issue.assignee.name}'}">
-						<h:outputText value="#{issue.assignee.name}" />				
-					</c:if>
-					<c:otherwise>
-						<h:outputText value="Issue not assigned yet" />
-					</c:otherwise>	
+				<c:otherwise>					
+					<h:outputText value="#{issue.assignee.name != null ? issue.assignee.name : 'Issue not assigned yet'}" />
 				</c:otherwise>	
 			</p:column>
 

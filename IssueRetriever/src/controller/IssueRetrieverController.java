@@ -1,5 +1,6 @@
 package controller;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import org.gitlab.api.models.GitlabProject;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
+import component.InfoException;
 import config.ConfigException;
 import config.LoadConfig;
 import logic.IssueRetrieverLocal;
@@ -200,22 +202,25 @@ public class IssueRetrieverController {
 		
 		ArrayList<String> labels=new ArrayList<String>();
 		
+		if(endDate.before(startDate)){
+			throw new InfoException("Bad date range");
+		}
+		
 		if(label1 != null && !label1.isEmpty()){ 
-			label1=label1.replaceAll(" ", "%20"); 
-			labels.add(label1);
+			labels.add(URLEncoder.encode( label1, "UTF-8" ));
 		}
 		
 		if(label2 != null && !label2.isEmpty()){ 
-			label2=label2.replaceAll(" ", "%20"); 
-			if(!labels.contains(label2)){ 
-				labels.add(label2);
+			String lab2Aux=URLEncoder.encode( label2, "UTF-8" );
+			if(!labels.contains(lab2Aux)){ 
+				labels.add(lab2Aux);
 			}
 		}
 		
 		if(label3 != null && !label3.isEmpty()){ 
-			label3=label3.replaceAll(" ", "%20"); 
-			if(!labels.contains(label3)){
-				labels.add(label3);
+			String lab3Aux=URLEncoder.encode( label3, "UTF-8" );
+			if(!labels.contains(lab3Aux)){ 
+				labels.add(lab3Aux);
 			}
 		}
 		
@@ -256,6 +261,5 @@ public class IssueRetrieverController {
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
 	}
-
 }
 

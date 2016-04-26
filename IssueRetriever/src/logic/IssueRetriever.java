@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.ejb.Startup;
 import javax.ejb.Stateless;
+import javax.servlet.ServletException;
 
 import org.gitlab.api.AuthMethod;
 import org.gitlab.api.GitlabAPI;
@@ -19,6 +20,7 @@ import org.gitlab.api.models.GitlabLabel;
 import org.gitlab.api.models.GitlabMilestone;
 import org.gitlab.api.models.GitlabProject;
 
+import config.ConfigException;
 import config.LoadConfig;
 
 @Stateless
@@ -126,7 +128,8 @@ public class IssueRetriever implements IssueRetrieverLocal {
 
 	@Override
 	public List<GitlabProject> getProjects() throws Exception {
-		List<GitlabProject> projects = getGitlabAPI().getProjects();
+		List<GitlabProject> projects = null;
+		projects = getGitlabAPI().getProjects();
 		if (projects.isEmpty()) {
 			throw new LogicException("No projects found");
 		}
