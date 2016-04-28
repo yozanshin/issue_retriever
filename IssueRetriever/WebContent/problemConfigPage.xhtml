@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<title>Search Issues</title>
+</h:head>
+	<f:metadata>
+		<f:viewParam name="problemCode" value="#{problemController.problemCode}" />
+	</f:metadata>
+<h:body>
+	<h:form id="form">
+		<p:growl id="msgs" showDetail="true" />
+
+		<p:panel header="Error reporting" style="margin-bottom:10px;">
+			<h:panelGrid columns="1" cellpadding="5">
+					<h:outputText value="Unable to complete your request. Error detected in file config.properties."/>
+					<h:outputText value="Please go to config.properties location (~/standalone/deployments/issue-retriever.war/WEB-INF) and configure it manually."/>
+					<h:outputText value="Then redeploy and try a new search."/>
+
+			<p:separator />	
+	
+				<h:commandButton value="Reload Config" type="submit"  action="#{problemController.reloadConfig}" />
+				
+			</h:panelGrid>
+		</p:panel>
+	</h:form>
+
+</h:body>
+</html>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -10,7 +9,7 @@
 	<title>Search Issues</title>
 </h:head>
 <h:body>
-<c:if test="#{issueRetrieverController.checkConfig()}">
+<c:if test="#{!issueRetrieverController.checkConfig()}">
 	<h:form id="form">
 		<p:growl id="msgs" showDetail="true" />
 
@@ -70,6 +69,8 @@
         		<p:calendar id="endDate" value="#{issueRetrieverController.endDate}" required="true" requiredMessage="Please a end date"/>
         
 				<h:commandButton value="submit" action="#{issueRetrieverController.submit}"/>
+				
+				<h:commandButton value="Reload Config" action="#{issueRetrieverController.reloadConfig()}" update=":form" immediate="true"/>
 				
 			</h:panelGrid>
 

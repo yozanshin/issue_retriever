@@ -3,28 +3,24 @@ package controller;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.gitlab.api.models.GitlabIssue;
 import org.gitlab.api.models.GitlabLabel;
 import org.gitlab.api.models.GitlabMilestone;
 import org.gitlab.api.models.GitlabProject;
-import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 
-import component.InfoException;
-import config.ConfigException;
 import config.LoadConfig;
 import logic.IssueRetrieverLocal;
+import logic.LogicException;
 
 @ManagedBean
 @SessionScoped
@@ -73,20 +69,16 @@ public class IssueRetrieverController {
 	public List<GitlabProject> getProjects() {
 		try {
 
-			if (projects == null) {
+			//if (projects == null) {
 				long initTime = System.currentTimeMillis();
 				projects = issueRetriever.getProjects();
-				System.out.println("PROJECTS: " + projects.size() + ". TIME: "
-						+ (float) (System.currentTimeMillis() - initTime) / 1000 + " seconds");
-			}
-
-			return projects;
+			//}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("ERROR: " + ex.getMessage());
-			return null;
+			errorRedirect("5");
 		}
+
+		return projects;
 	}
 
 	public void onChange() throws Exception {
@@ -198,45 +190,89 @@ public class IssueRetrieverController {
 		endDateSt=formatter.format(this.endDate);
 	}
 	
-	public String submit() throws Exception{		
-		
+	public String submit(){				
 		ArrayList<String> labels=new ArrayList<String>();
 		
+		checkConfig();
+		
 		if(endDate.before(startDate)){
-			throw new InfoException("Bad date range");
-		}
-		
-		if(label1 != null && !label1.isEmpty()){ 
-			labels.add(URLEncoder.encode( label1, "UTF-8" ));
-		}
-		
-		if(label2 != null && !label2.isEmpty()){ 
-			String lab2Aux=URLEncoder.encode( label2, "UTF-8" );
-			if(!labels.contains(lab2Aux)){ 
-				labels.add(lab2Aux);
+			errorRedirect("2");
+		}else {
+			try {
+				
+				if(label1 != null && !label1.isEmpty()){ 
+					labels.add(URLEncoder.encode( label1, "UTF-8" ));
+				}
+				
+				if(label2 != null && !label2.isEmpty()){ 
+					String lab2Aux=URLEncoder.encode( label2, "UTF-8" );
+					if(!labels.contains(lab2Aux)){ 
+						labels.add(lab2Aux);
+					}
+				}
+				
+				if(label3 != null && !label3.isEmpty()){ 
+					String lab3Aux=URLEncoder.encode( label3, "UTF-8" );
+					if(!labels.contains(lab3Aux)){ 
+						labels.add(lab3Aux);
+					}
+				}
+				
+				if(milestone != null && !milestone.isEmpty()){ 
+					milestone=milestone.replaceAll(" ", "%20"); 
+				}
+				setIssues(issueRetriever.getIssues(project, labels, milestone, startDateSt, endDateSt));
+			} catch (LogicException leX) {
+				if (leX.getMessage().contains("1")){
+					errorRedirect("3");
+				}else {
+					errorRedirect("4");
+				}
+			} catch (Exception ex) {
+				errorRedirect("0");
 			}
 		}
-		
-		if(label3 != null && !label3.isEmpty()){ 
-			String lab3Aux=URLEncoder.encode( label3, "UTF-8" );
-			if(!labels.contains(lab3Aux)){ 
-				labels.add(lab3Aux);
-			}
-		}
-		
-		if(milestone != null && !milestone.isEmpty()){ 
-			milestone=milestone.replaceAll(" ", "%20"); 
-		}
-			setIssues(issueRetriever.getIssues(project, labels, milestone, startDateSt, endDateSt));
-
-		
 		return "tablePage";
 	}
 	
-	public boolean checkConfig() throws ConfigException{
-		return !LoadConfig.getInstance().isError();
+	public boolean checkConfig(){
+		boolean result=false;
+		try {
+			LoadConfig.getInstance().isError();
+		} catch (Exception e) {
+			errorConfigRedirect();
+		}
+		
+		return result;
+	}
+	
+	public String reloadConfig(){
+			LoadConfig.getInstance().readConfig();
+			
+			return "index.xhtml?faces-redirect=true";
+
 	}
 
+	private void errorRedirect(String errorCode){
+		try {
+			//result=true;
+			FacesContext fContext = FacesContext.getCurrentInstance();
+			ExternalContext extContext = fContext.getExternalContext();
+			extContext.redirect(extContext.getRequestContextPath() + "/problemPage.xhtml?problemCode="+errorCode);
+		} catch (Exception ex) {
+		}
+	}
+
+	private void errorConfigRedirect(){
+		try {
+			//result=true;
+			FacesContext fContext = FacesContext.getCurrentInstance();
+			ExternalContext extContext = fContext.getExternalContext();
+			extContext.redirect(extContext.getRequestContextPath() + "/problemConfigPage.xhtml");
+		} catch (Exception ex) {
+		}
+	}
+	
 	public List<GitlabIssue> getIssues() {
 		return issues;
 	}

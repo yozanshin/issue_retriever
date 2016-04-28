@@ -2,12 +2,8 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
   <display-name>issueRetriever</display-name>
 	    <error-page>
-	        <exception-type>config.ConfigException</exception-type>
-	        <location>/faces/errorConfPage.xhtml</location>
-	    </error-page>
-	    <error-page>
-	        <exception-type>javax.servlet.ServletException</exception-type>
-	        <location>/ErrorHandler</location>
+	        <exception-type>java.lang.Exception</exception-type>
+	        <location>/problemPage.xhtml?problemCode=0</location>
 	    </error-page>
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>

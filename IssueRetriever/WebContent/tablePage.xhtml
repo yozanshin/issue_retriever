@@ -23,12 +23,7 @@
 					<img src="images/excel.png" width="24" />
 					<p:dataExporter type="xls" target="tbl" fileName="issues" />
 				</h:commandLink>
-
-				<h:commandLink>
-					<img src="images/pdf.png" width="24" />
-					<p:dataExporter type="pdf" target="tbl" fileName="issues" />
-				</h:commandLink>
-
+				
 				<h:commandLink>
 					<img src="images/csv.png" width="24" />
 					<p:dataExporter type="csv" target="tbl" fileName="issues" />
@@ -95,7 +90,7 @@
 
 		</p:dataTable>
 
-		<h:commandButton value="New Search" type="submit"  action="index?faces-redirect=true" />
+		<h:commandButton value="New Search" type="submit"  action="index.xhtml?faces-redirect=true" />
 
 	</h:form>
 </h:body>

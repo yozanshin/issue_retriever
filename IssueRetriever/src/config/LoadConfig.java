@@ -35,22 +35,27 @@ public class LoadConfig {
 	private static final String PROPERTY_DATEFORMAT = "date_format";
 	private static final String PROPERTY_ENDPOINT = "gitlab_endpoint";
 	private static final String PROPERTY_TOKEN = "gitlab_token";
-	private String dateFormat;
-	private String gitlabUrl;
-	private String gitlabToken;
+	private static String dateFormat;
+	private static String gitlabUrl;
+	private static String gitlabToken;
 	private static LoadConfig config;
 
 	static Properties prop;
 
-	private String errorMessage;
-	private boolean error = false;
+	private static String errorMessage;
+	private static boolean error = false;
 
 	@Resource
-	private WebServiceContext ctx;
+	private static WebServiceContext ctx;
 	
 	public LoadConfig() {
-		prop = new Properties();
+		readConfig();
+	}
+	
+	public void readConfig(){
 		
+		prop = new Properties();
+		error=false;
 		
 		
 		if(FacesContext.getCurrentInstance() == null){
@@ -114,7 +119,7 @@ public class LoadConfig {
 	}
 
 	public void setError(boolean error) {
-		this.error = error;
+		LoadConfig.error = error;
 	}
 
 	public String getErrorMessage() {
@@ -128,7 +133,7 @@ public class LoadConfig {
 
 	public void setDateFormat(String dateFormat) throws ConfigException {
 		if (dateFormat != null || !"".equals(dateFormat)) {
-			this.dateFormat = dateFormat;
+			LoadConfig.dateFormat = dateFormat;
 			
 			checkDateFormat();
 			
@@ -142,7 +147,7 @@ public class LoadConfig {
 				prop.load(inputStream);
 					FileOutputStream outputStream = new FileOutputStream(externalContext.getRealPath("/WEB-INF/config.properties"));
 				
-				prop.setProperty(PROPERTY_DATEFORMAT, this.dateFormat);
+				prop.setProperty(PROPERTY_DATEFORMAT, LoadConfig.dateFormat);
 				prop.store(outputStream, null);
 				outputStream.close();
 			} catch (IOException e) {
@@ -159,7 +164,7 @@ public class LoadConfig {
 
 	public void setGitlabUrl(String gitlabUrl) throws ConfigException {
 		if (gitlabUrl != null || !"".equals(gitlabUrl)) {
-			this.gitlabUrl = gitlabUrl;
+			LoadConfig.gitlabUrl = gitlabUrl;
 			checkConnection();
 			
 			ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext()
@@ -172,7 +177,7 @@ public class LoadConfig {
 				prop.load(inputStream);
 					FileOutputStream outputStream = new FileOutputStream(externalContext.getRealPath("/WEB-INF/config.properties"));
 				
-				prop.setProperty(PROPERTY_ENDPOINT, this.gitlabUrl);
+				prop.setProperty(PROPERTY_ENDPOINT, LoadConfig.gitlabUrl);
 				prop.store(outputStream, null);
 				outputStream.close();
 			} catch (IOException e) {
@@ -189,7 +194,7 @@ public class LoadConfig {
 
 	public void setGitlabToken(String gitlabToken) throws ConfigException {
 		if (gitlabToken != null || !"".equals(gitlabToken)) {
-			this.gitlabToken = gitlabToken;
+			LoadConfig.gitlabToken = gitlabToken;
 			checkConnection();
 			
 			ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext()
@@ -202,7 +207,7 @@ public class LoadConfig {
 				prop.load(inputStream);
 					FileOutputStream outputStream = new FileOutputStream(externalContext.getRealPath("/WEB-INF/config.properties"));
 				
-				prop.setProperty(PROPERTY_TOKEN, this.gitlabToken);
+				prop.setProperty(PROPERTY_TOKEN, LoadConfig.gitlabToken);
 				prop.store(outputStream, null);
 				outputStream.close();
 			} catch (IOException e) {
@@ -232,7 +237,7 @@ public class LoadConfig {
 	
 	private void checkConnection() throws ConfigException{
 	    try {
-			URL myURL = new URL(this.gitlabUrl+"/api/v3/projects?private_token="+this.gitlabToken);
+			URL myURL = new URL(LoadConfig.gitlabUrl+"/api/v3/projects?private_token="+LoadConfig.gitlabToken);
 			HttpURLConnection conn = (HttpURLConnection) myURL.openConnection();
 		    conn.setRequestMethod("GET");
 	        int responseCode = conn.getResponseCode();
